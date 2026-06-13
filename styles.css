@@ -780,3 +780,7 @@ a {
     font-weight: 600;
     white-space: nowrap;
 }
+.header-apple {
+    display: inline-block;
+    animation: spin-apple 3s linear infinite;
+}
