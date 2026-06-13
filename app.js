@@ -131,7 +131,11 @@ const App = (() => {
         
         // Заголовки и кнопки
         const config = getScreenConfig(screenName);
-        DOM.pageTitle.textContent = config.title;
+       if (screenName === 'home') {
+    DOM.pageTitle.innerHTML = '<span class="header-apple">🍎</span> АгроМагазин';
+} else {
+    DOM.pageTitle.textContent = config.title;
+}
         DOM.backBtn.classList.toggle('hidden', !config.showBack);
         DOM.cartBtn.classList.toggle('hidden', screenName === 'cart' || screenName === 'checkout' || screenName === 'success');
         
