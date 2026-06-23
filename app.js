@@ -426,9 +426,12 @@ const App = (() => {
     function getProductImage(product) {
         const imageUrl = (product?.image_url || '').trim();
         const hasImage = /^https?:\/\//i.test(imageUrl);
+        const fallback = escapeHtml(product?.emoji || getEmojiForProduct(product?.name));
         return {
-            style: hasImage ? `style="background-image: url('${escapeHtml(imageUrl)}')"` : '',
-            content: hasImage ? '' : escapeHtml(product?.emoji || getEmojiForProduct(product?.name))
+            style: '',
+            content: hasImage
+                ? `<img class="product-photo" src="${escapeHtml(imageUrl)}" alt="" loading="lazy" onerror="this.parentElement.textContent='${fallback}'">`
+                : fallback
         };
     }
 
