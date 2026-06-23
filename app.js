@@ -291,6 +291,7 @@ const App = (() => {
                 name: product.name,
                 price: Number(product.price),
                 image_url: product.image_url,
+                emoji: product.emoji,
                 quantity: 1
             };
         }
@@ -394,13 +395,10 @@ const App = (() => {
         const card = document.createElement('div');
         card.className = 'product-card';
         
-        const imageStyle = product.image_url 
-            ? `style="background-image: url('${escapeHtml(product.image_url)}')"` 
-            : '';
-        const imageContent = !product.image_url ? getEmojiForProduct(product.name) : '';
+        const productImage = getProductImage(product);
         
         card.innerHTML = `
-            <div class="product-image" ${imageStyle}>${imageContent}</div>
+            <div class="product-image" ${productImage.style}>${productImage.content}</div>
             <div class="product-info">
                 <div class="product-name">${escapeHtml(product.name)}</div>
                 <div class="product-price-row">
@@ -423,6 +421,15 @@ const App = (() => {
         });
         
         return card;
+    }
+
+    function getProductImage(product) {
+        const imageUrl = (product?.image_url || '').trim();
+        const hasImage = /^https?:\/\//i.test(imageUrl);
+        return {
+            style: hasImage ? `style="background-image: url('${escapeHtml(imageUrl)}')"` : '',
+            content: hasImage ? '' : escapeHtml(product?.emoji || getEmojiForProduct(product?.name))
+        };
     }
 
     function getEmojiForProduct(name) {
@@ -506,13 +513,10 @@ const App = (() => {
         
         DOM.pageTitle.textContent = p.name;
         
-        const imageStyle = p.image_url 
-            ? `style="background-image: url('${escapeHtml(p.image_url)}')"` 
-            : '';
-        const imageContent = !p.image_url ? getEmojiForProduct(p.name) : '';
+        const productImage = getProductImage(p);
         
         DOM.productDetail.innerHTML = `
-            <div class="product-detail-image" ${imageStyle}>${imageContent}</div>
+            <div class="product-detail-image" ${productImage.style}>${productImage.content}</div>
             <h2 class="product-detail-title">${escapeHtml(p.name)}</h2>
             <div class="product-detail-price">${formatPrice(p.price)} ₽ / кг</div>
             <p class="product-detail-description">${escapeHtml(p.description || 'Свежий фермерский продукт. Выращено с заботой и любовью.')}</p>
@@ -542,15 +546,12 @@ const App = (() => {
             const row = document.createElement('div');
             row.className = 'cart-item';
             
-            const imageStyle = item.image_url 
-                ? `style="background-image: url('${escapeHtml(item.image_url)}')"` 
-                : '';
-            const imageContent = !item.image_url ? getEmojiForProduct(item.name) : '';
+            const productImage = getProductImage(item);
             
             const itemTotal = item.price * item.quantity;
             
             row.innerHTML = `
-                <div class="cart-item-image" ${imageStyle}>${imageContent}</div>
+                <div class="cart-item-image" ${productImage.style}>${productImage.content}</div>
                 <div class="cart-item-info">
                     <div>
                         <div class="cart-item-name">${escapeHtml(item.name)}</div>
