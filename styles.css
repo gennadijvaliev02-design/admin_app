@@ -1139,5 +1139,21 @@ a {
 }
 .header-apple {
     display: inline-block;
-    animation: spin-apple 3s linear infinite;
+    width: 22px;
+    height: 22px;
+    margin-right: 4px;
+    vertical-align: -4px;
+    line-height: 22px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.header-apple canvas {
+    display: block;
+    width: 22px;
+    height: 22px;
+}
+
+.header-apple.is-rendered .header-apple-fallback {
+    display: none;
 }

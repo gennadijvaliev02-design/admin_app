@@ -73,6 +73,124 @@ const App = (() => {
         interval: 3600
     };
 
+    let headerApple = null;
+
+    function getHomeTitleHtml() {
+        return '<span class="header-apple" aria-hidden="true"><span class="header-apple-fallback">🍏</span></span> АгроМагазин';
+    }
+
+    function stopHeaderApple() {
+        if (!headerApple) return;
+
+        if (headerApple.frameId) {
+            cancelAnimationFrame(headerApple.frameId);
+        }
+
+        if (headerApple.renderer) {
+            headerApple.renderer.dispose();
+        }
+
+        headerApple = null;
+    }
+
+    function initHeaderApple() {
+        const container = DOM.pageTitle.querySelector('.header-apple');
+        if (!container || container.classList.contains('is-rendered') || !window.THREE) return;
+
+        try {
+            stopHeaderApple();
+
+            const THREE = window.THREE;
+            const scene = new THREE.Scene();
+            const camera = new THREE.OrthographicCamera(-1.25, 1.25, 1.25, -1.25, 0.1, 10);
+            camera.position.set(0, 0.1, 4);
+            camera.lookAt(0, 0, 0);
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+            renderer.setSize(22, 22, false);
+            renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+            const group = new THREE.Group();
+            scene.add(group);
+
+            const appleProfile = [
+                new THREE.Vector2(0, -0.82),
+                new THREE.Vector2(0.44, -0.72),
+                new THREE.Vector2(0.66, -0.38),
+                new THREE.Vector2(0.72, 0.08),
+                new THREE.Vector2(0.58, 0.48),
+                new THREE.Vector2(0.3, 0.68),
+                new THREE.Vector2(0.08, 0.58),
+                new THREE.Vector2(0, 0.5)
+            ];
+            const appleGeometry = new THREE.LatheGeometry(appleProfile, 40);
+            const appleMaterial = new THREE.MeshStandardMaterial({
+                color: 0x77b82a,
+                roughness: 0.42,
+                metalness: 0.02
+            });
+            const apple = new THREE.Mesh(appleGeometry, appleMaterial);
+            apple.scale.set(0.82, 0.82, 0.82);
+            group.add(apple);
+
+            const stem = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.05, 0.065, 0.34, 10),
+                new THREE.MeshStandardMaterial({ color: 0x6b3b1c, roughness: 0.6 })
+            );
+            stem.position.set(0.08, 0.68, 0);
+            stem.rotation.z = -0.28;
+            group.add(stem);
+
+            const leafShape = new THREE.Shape();
+            leafShape.moveTo(0, 0);
+            leafShape.bezierCurveTo(0.18, 0.12, 0.34, 0.1, 0.48, 0);
+            leafShape.bezierCurveTo(0.32, -0.08, 0.16, -0.1, 0, 0);
+            const leaf = new THREE.Mesh(
+                new THREE.ShapeGeometry(leafShape),
+                new THREE.MeshStandardMaterial({
+                    color: 0x4f9e2f,
+                    roughness: 0.48,
+                    side: THREE.DoubleSide
+                })
+            );
+            leaf.position.set(0.08, 0.82, 0);
+            leaf.rotation.set(0.28, -0.34, 0.32);
+            leaf.scale.set(0.7, 0.7, 0.7);
+            group.add(leaf);
+
+            scene.add(new THREE.HemisphereLight(0xffffff, 0xb5d28a, 1.8));
+            const keyLight = new THREE.DirectionalLight(0xffffff, 1.7);
+            keyLight.position.set(2.5, 3, 3);
+            scene.add(keyLight);
+            const fillLight = new THREE.DirectionalLight(0xd6f7ff, 0.7);
+            fillLight.position.set(-2, 1, 2);
+            scene.add(fillLight);
+
+            container.appendChild(renderer.domElement);
+            container.classList.add('is-rendered');
+
+            headerApple = { container, renderer, frameId: null };
+
+            const animate = () => {
+                if (!container.isConnected) {
+                    stopHeaderApple();
+                    return;
+                }
+
+                group.rotation.y += 0.018;
+                renderer.render(scene, camera);
+                headerApple.frameId = requestAnimationFrame(animate);
+            };
+
+            animate();
+        } catch (error) {
+            console.warn('3D header apple fallback:', error);
+            stopHeaderApple();
+            container.classList.remove('is-rendered');
+        }
+    }
+
     // ============================================
     // TELEGRAM INIT
     // ============================================
@@ -140,11 +258,13 @@ const App = (() => {
         
         // Заголовки и кнопки
         const config = getScreenConfig(screenName);
-       if (screenName === 'home') {
-    DOM.pageTitle.innerHTML = '<span class="header-apple">🍎</span> АгроМагазин';
-} else {
-    DOM.pageTitle.textContent = config.title;
-}
+        if (screenName === 'home') {
+            DOM.pageTitle.innerHTML = getHomeTitleHtml();
+            initHeaderApple();
+        } else {
+            stopHeaderApple();
+            DOM.pageTitle.textContent = config.title;
+        }
         DOM.backBtn.classList.toggle('hidden', !config.showBack);
         DOM.cartBtn.classList.toggle('hidden', screenName === 'cart' || screenName === 'checkout' || screenName === 'success');
         
@@ -871,6 +991,7 @@ const App = (() => {
         updateCartBadge();
         bindEvents();
         setupHeroSlider();
+        initHeaderApple();
         await loadData();
     }
 
