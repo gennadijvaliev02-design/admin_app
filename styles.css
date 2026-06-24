@@ -223,7 +223,9 @@ a {
     border-radius: 24px;
     margin-bottom: 28px;
     overflow: hidden;
-    background-color: #121710;
+    background:
+        radial-gradient(circle at 20% 12%, rgba(78, 176, 122, 0.18), transparent 34%),
+        linear-gradient(135deg, #0a100d 0%, #111710 54%, #151b13 100%);
     box-shadow: 0 20px 50px rgba(13, 30, 16, 0.18);
     isolation: isolate;
 }
@@ -231,6 +233,86 @@ a {
 .hero-track {
     position: relative;
     height: 260px;
+}
+
+.hero-stars {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.hero-stars::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 15% 18%, rgba(255, 255, 255, 0.08), transparent 18%),
+        radial-gradient(circle at 84% 12%, rgba(64, 167, 227, 0.08), transparent 20%),
+        linear-gradient(180deg, rgba(5, 10, 7, 0.14), rgba(5, 10, 7, 0.24));
+}
+
+.hero-star-field {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    opacity: 0.58;
+    will-change: opacity, transform;
+}
+
+.hero-star-field-sm {
+    top: 18px;
+    left: 24px;
+    box-shadow:
+        42px 34px 0 rgba(255, 255, 255, 0.52),
+        94px 8px 0 rgba(255, 255, 255, 0.46),
+        138px 57px 0 rgba(255, 255, 255, 0.38),
+        182px 24px 0 rgba(255, 255, 255, 0.5),
+        226px 83px 0 rgba(255, 255, 255, 0.32),
+        282px 38px 0 rgba(255, 255, 255, 0.46),
+        326px 112px 0 rgba(255, 255, 255, 0.42),
+        358px 52px 0 rgba(255, 255, 255, 0.34),
+        18px 126px 0 rgba(255, 255, 255, 0.44),
+        76px 176px 0 rgba(255, 255, 255, 0.28),
+        154px 145px 0 rgba(255, 255, 255, 0.36),
+        238px 156px 0 rgba(255, 255, 255, 0.4),
+        312px 188px 0 rgba(255, 255, 255, 0.3);
+    animation: heroStarTwinkle 4.8s ease-in-out infinite;
+}
+
+.hero-star-field-md {
+    top: 46px;
+    left: 58px;
+    width: 3px;
+    height: 3px;
+    opacity: 0.5;
+    box-shadow:
+        62px 68px 0 rgba(255, 255, 255, 0.42),
+        126px 10px 0 rgba(255, 255, 255, 0.48),
+        204px 82px 0 rgba(255, 255, 255, 0.36),
+        282px 22px 0 rgba(255, 255, 255, 0.42),
+        16px 152px 0 rgba(255, 255, 255, 0.34),
+        176px 132px 0 rgba(255, 255, 255, 0.42),
+        294px 154px 0 rgba(255, 255, 255, 0.32);
+    animation: heroStarTwinkle 6.2s ease-in-out 1.3s infinite;
+}
+
+.hero-star-field-drift {
+    top: 24px;
+    left: 14px;
+    width: 2px;
+    height: 2px;
+    opacity: 0.36;
+    box-shadow:
+        112px 26px 0 rgba(255, 255, 255, 0.44),
+        218px 36px 0 rgba(255, 255, 255, 0.32),
+        344px 72px 0 rgba(255, 255, 255, 0.36),
+        68px 198px 0 rgba(255, 255, 255, 0.3),
+        268px 186px 0 rgba(255, 255, 255, 0.34);
+    animation: heroStarDrift 18s ease-in-out infinite;
 }
 
 .hero-slide {
@@ -253,8 +335,8 @@ a {
     position: absolute;
     inset: 0;
     background:
-        linear-gradient(180deg, rgba(8, 12, 8, 0.05) 0%, rgba(8, 12, 8, 0.48) 48%, rgba(8, 12, 8, 0.86) 100%),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.58) 0%, rgba(0, 0, 0, 0.1) 68%);
+        linear-gradient(180deg, rgba(8, 12, 8, 0.28) 0%, rgba(8, 12, 8, 0.58) 48%, rgba(8, 12, 8, 0.9) 100%),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.64) 0%, rgba(0, 0, 0, 0.22) 68%);
     z-index: -1;
 }
 
@@ -266,6 +348,8 @@ a {
 
 .hero-content {
     max-width: 82%;
+    position: relative;
+    z-index: 3;
     text-shadow: 0 2px 18px rgba(0, 0, 0, 0.34);
 }
 
@@ -303,7 +387,7 @@ a {
 .hero-arrow {
     position: absolute;
     top: 16px;
-    z-index: 3;
+    z-index: 4;
     width: 38px;
     height: 38px;
     display: flex;
@@ -336,7 +420,7 @@ a {
     left: 0;
     right: 0;
     bottom: 15px;
-    z-index: 3;
+    z-index: 4;
     display: flex;
     justify-content: center;
     gap: 7px;
@@ -353,6 +437,34 @@ a {
 .hero-dot.active {
     width: 22px;
     background: #ffffff;
+}
+
+@keyframes heroStarTwinkle {
+    0%, 100% {
+        opacity: 0.38;
+        transform: translate3d(0, 0, 0);
+    }
+    48% {
+        opacity: 0.78;
+        transform: translate3d(0, -1px, 0);
+    }
+}
+
+@keyframes heroStarDrift {
+    0%, 100% {
+        opacity: 0.24;
+        transform: translate3d(0, 0, 0);
+    }
+    50% {
+        opacity: 0.58;
+        transform: translate3d(8px, 4px, 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-star-field {
+        animation: none;
+    }
 }
 
 /* ============================================
