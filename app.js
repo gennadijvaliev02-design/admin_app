@@ -89,12 +89,15 @@ const App = (() => {
                             <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
                         </radialGradient>
                     </defs>
-                    <ellipse class="header-apple-shadow" cx="32" cy="57" rx="21" ry="5"/>
-                    <path class="header-apple-body" d="M31.9 16.8C25.2 8.2 11.4 11.9 7.4 27.7 2.8 45.8 17.2 58.1 29.6 54.1c1.6-.5 3.2-.5 4.8 0 12.4 4 26.8-8.3 22.2-26.4C52.6 11.9 38.7 8.2 31.9 16.8Z"/>
-                    <path class="header-apple-dimple" d="M22.6 14.2c4 4.7 14.6 4.8 18.8 0-1.8 8.1-16.8 8.1-18.8 0Z"/>
-                    <path class="header-apple-glow" d="M15.3 28.4c1.9-7.8 8.3-11.4 13.9-9.8 2.2.6 1.8 3.9-.5 3.9-5 .1-8.1 2.9-9.6 7.9-.7 2.4-4.4.5-3.8-2Z"/>
-                    <path class="header-apple-stem" d="M33.1 15.4c1.7-5.1 3.9-8.7 7.7-11.9 1.5-1.3 4 .1 3.3 2-1.5 4.1-4.4 7.9-7.9 10.8-1.4 1.2-3.6.8-3.1-.9Z"/>
-                    <path class="header-apple-leaf" d="M39.5 13.7c5-7.7 13.7-6.3 17.7-2.1-4.2 6.4-12.4 7.8-17.7 2.1Z"/>
+                    <g class="header-apple-object">
+                        <ellipse class="header-apple-shadow" cx="32" cy="57" rx="21" ry="5"/>
+                        <path class="header-apple-body" d="M31.9 16.8C25.2 8.2 11.4 11.9 7.4 27.7 2.8 45.8 17.2 58.1 29.6 54.1c1.6-.5 3.2-.5 4.8 0 12.4 4 26.8-8.3 22.2-26.4C52.6 11.9 38.7 8.2 31.9 16.8Z"/>
+                        <path class="header-apple-side" d="M44.8 19.1c8.2 6.2 8.1 22.2-.2 29.5 4.8-7.6 5.1-19.6.2-29.5Z"/>
+                        <path class="header-apple-dimple" d="M22.6 14.2c4 4.7 14.6 4.8 18.8 0-1.8 8.1-16.8 8.1-18.8 0Z"/>
+                        <path class="header-apple-glow" d="M15.3 28.4c1.9-7.8 8.3-11.4 13.9-9.8 2.2.6 1.8 3.9-.5 3.9-5 .1-8.1 2.9-9.6 7.9-.7 2.4-4.4.5-3.8-2Z"/>
+                        <path class="header-apple-stem" d="M33.1 15.4c1.7-5.1 3.9-8.7 7.7-11.9 1.5-1.3 4 .1 3.3 2-1.5 4.1-4.4 7.9-7.9 10.8-1.4 1.2-3.6.8-3.1-.9Z"/>
+                        <path class="header-apple-leaf" d="M39.5 13.7c5-7.7 13.7-6.3 17.7-2.1-4.2 6.4-12.4 7.8-17.7 2.1Z"/>
+                    </g>
                 </svg>
                 <span class="header-apple-fallback">🍏</span>
             </span> АгроМагазин
