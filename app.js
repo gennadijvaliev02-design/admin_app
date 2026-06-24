@@ -73,122 +73,32 @@ const App = (() => {
         interval: 3600
     };
 
-    let headerApple = null;
-
     function getHomeTitleHtml() {
-        return '<span class="header-apple" aria-hidden="true"><span class="header-apple-fallback">🍏</span></span> АгроМагазин';
-    }
-
-    function stopHeaderApple() {
-        if (!headerApple) return;
-
-        if (headerApple.frameId) {
-            cancelAnimationFrame(headerApple.frameId);
-        }
-
-        if (headerApple.renderer) {
-            headerApple.renderer.dispose();
-        }
-
-        headerApple = null;
-    }
-
-    function initHeaderApple() {
-        const container = DOM.pageTitle.querySelector('.header-apple');
-        if (!container || container.classList.contains('is-rendered') || !window.THREE) return;
-
-        try {
-            stopHeaderApple();
-
-            const THREE = window.THREE;
-            const scene = new THREE.Scene();
-            const camera = new THREE.OrthographicCamera(-1.25, 1.25, 1.25, -1.25, 0.1, 10);
-            camera.position.set(0, 0.1, 4);
-            camera.lookAt(0, 0, 0);
-
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-            renderer.setSize(22, 22, false);
-            renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-            const group = new THREE.Group();
-            scene.add(group);
-
-            const appleProfile = [
-                new THREE.Vector2(0, -0.82),
-                new THREE.Vector2(0.44, -0.72),
-                new THREE.Vector2(0.66, -0.38),
-                new THREE.Vector2(0.72, 0.08),
-                new THREE.Vector2(0.58, 0.48),
-                new THREE.Vector2(0.3, 0.68),
-                new THREE.Vector2(0.08, 0.58),
-                new THREE.Vector2(0, 0.5)
-            ];
-            const appleGeometry = new THREE.LatheGeometry(appleProfile, 40);
-            const appleMaterial = new THREE.MeshStandardMaterial({
-                color: 0x77b82a,
-                roughness: 0.42,
-                metalness: 0.02
-            });
-            const apple = new THREE.Mesh(appleGeometry, appleMaterial);
-            apple.scale.set(0.82, 0.82, 0.82);
-            group.add(apple);
-
-            const stem = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.05, 0.065, 0.34, 10),
-                new THREE.MeshStandardMaterial({ color: 0x6b3b1c, roughness: 0.6 })
-            );
-            stem.position.set(0.08, 0.68, 0);
-            stem.rotation.z = -0.28;
-            group.add(stem);
-
-            const leafShape = new THREE.Shape();
-            leafShape.moveTo(0, 0);
-            leafShape.bezierCurveTo(0.18, 0.12, 0.34, 0.1, 0.48, 0);
-            leafShape.bezierCurveTo(0.32, -0.08, 0.16, -0.1, 0, 0);
-            const leaf = new THREE.Mesh(
-                new THREE.ShapeGeometry(leafShape),
-                new THREE.MeshStandardMaterial({
-                    color: 0x4f9e2f,
-                    roughness: 0.48,
-                    side: THREE.DoubleSide
-                })
-            );
-            leaf.position.set(0.08, 0.82, 0);
-            leaf.rotation.set(0.28, -0.34, 0.32);
-            leaf.scale.set(0.7, 0.7, 0.7);
-            group.add(leaf);
-
-            scene.add(new THREE.HemisphereLight(0xffffff, 0xb5d28a, 1.8));
-            const keyLight = new THREE.DirectionalLight(0xffffff, 1.7);
-            keyLight.position.set(2.5, 3, 3);
-            scene.add(keyLight);
-            const fillLight = new THREE.DirectionalLight(0xd6f7ff, 0.7);
-            fillLight.position.set(-2, 1, 2);
-            scene.add(fillLight);
-
-            container.appendChild(renderer.domElement);
-            container.classList.add('is-rendered');
-
-            headerApple = { container, renderer, frameId: null };
-
-            const animate = () => {
-                if (!container.isConnected) {
-                    stopHeaderApple();
-                    return;
-                }
-
-                group.rotation.y += 0.018;
-                renderer.render(scene, camera);
-                headerApple.frameId = requestAnimationFrame(animate);
-            };
-
-            animate();
-        } catch (error) {
-            console.warn('3D header apple fallback:', error);
-            stopHeaderApple();
-            container.classList.remove('is-rendered');
-        }
+        return `
+            <span class="header-apple" aria-hidden="true">
+                <svg class="header-apple-svg" viewBox="0 0 64 64" focusable="false">
+                    <defs>
+                        <radialGradient id="headerAppleBody" cx="34%" cy="28%" r="72%">
+                            <stop offset="0%" stop-color="#d9f78c"/>
+                            <stop offset="42%" stop-color="#8fd13c"/>
+                            <stop offset="78%" stop-color="#56ab2f"/>
+                            <stop offset="100%" stop-color="#34791f"/>
+                        </radialGradient>
+                        <radialGradient id="headerAppleGlow" cx="30%" cy="24%" r="38%">
+                            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.82"/>
+                            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                        </radialGradient>
+                    </defs>
+                    <ellipse class="header-apple-shadow" cx="32" cy="57" rx="21" ry="5"/>
+                    <path class="header-apple-body" d="M31.9 16.8C25.2 8.2 11.4 11.9 7.4 27.7 2.8 45.8 17.2 58.1 29.6 54.1c1.6-.5 3.2-.5 4.8 0 12.4 4 26.8-8.3 22.2-26.4C52.6 11.9 38.7 8.2 31.9 16.8Z"/>
+                    <path class="header-apple-dimple" d="M22.6 14.2c4 4.7 14.6 4.8 18.8 0-1.8 8.1-16.8 8.1-18.8 0Z"/>
+                    <path class="header-apple-glow" d="M15.3 28.4c1.9-7.8 8.3-11.4 13.9-9.8 2.2.6 1.8 3.9-.5 3.9-5 .1-8.1 2.9-9.6 7.9-.7 2.4-4.4.5-3.8-2Z"/>
+                    <path class="header-apple-stem" d="M33.1 15.4c1.7-5.1 3.9-8.7 7.7-11.9 1.5-1.3 4 .1 3.3 2-1.5 4.1-4.4 7.9-7.9 10.8-1.4 1.2-3.6.8-3.1-.9Z"/>
+                    <path class="header-apple-leaf" d="M39.5 13.7c5-7.7 13.7-6.3 17.7-2.1-4.2 6.4-12.4 7.8-17.7 2.1Z"/>
+                </svg>
+                <span class="header-apple-fallback">🍏</span>
+            </span> АгроМагазин
+        `;
     }
 
     // ============================================
@@ -260,9 +170,7 @@ const App = (() => {
         const config = getScreenConfig(screenName);
         if (screenName === 'home') {
             DOM.pageTitle.innerHTML = getHomeTitleHtml();
-            initHeaderApple();
         } else {
-            stopHeaderApple();
             DOM.pageTitle.textContent = config.title;
         }
         DOM.backBtn.classList.toggle('hidden', !config.showBack);
@@ -991,7 +899,6 @@ const App = (() => {
         updateCartBadge();
         bindEvents();
         setupHeroSlider();
-        initHeaderApple();
         await loadData();
     }
 
