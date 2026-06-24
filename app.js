@@ -29,10 +29,13 @@ const App = (() => {
         backBtn: document.getElementById('back-btn'),
         cartBtn: document.getElementById('cart-btn'),
         cartBadge: document.getElementById('cart-badge'),
+        cartSheetCount: document.getElementById('cart-sheet-count'),
+        cartCheckoutBtn: document.getElementById('cart-checkout-btn'),
         pageTitle: document.getElementById('page-title'),
         viewAllBtn: document.getElementById('view-all-btn'),
         goCatalogBtn: document.getElementById('go-catalog-btn'),
         backHomeBtn: document.getElementById('back-home-btn'),
+        heroDots: document.getElementById('hero-dots'),
         
         // Экраны
         screens: {
@@ -62,6 +65,12 @@ const App = (() => {
         inputName: document.getElementById('input-name'),
         inputPhone: document.getElementById('input-phone'),
         inputAddress: document.getElementById('input-address')
+    };
+
+    const heroState = {
+        current: 0,
+        timer: null,
+        interval: 3600
     };
 
     // ============================================
@@ -371,6 +380,10 @@ const App = (() => {
 }
         } else {
             DOM.cartBadge.classList.add('hidden');
+            const hint = document.getElementById('cart-hint');
+            if (hint) {
+                hint.style.display = 'none';
+            }
         }
     }
 
@@ -534,6 +547,7 @@ const App = (() => {
     function renderCart() {
         const items = getCartItems();
         DOM.cartItems.innerHTML = '';
+        updateCartSheetCount();
         
         if (items.length === 0) {
             DOM.cartEmpty.classList.remove('hidden');
@@ -590,6 +604,13 @@ const App = (() => {
         DOM.totalPrice.textContent = `${formatPrice(total)} ₽`;
         
         updateMainButtonText();
+    }
+
+    function updateCartSheetCount() {
+        if (!DOM.cartSheetCount) return;
+        const count = getCartItemsCount();
+        DOM.cartSheetCount.textContent = count > 99 ? '99+' : count;
+        DOM.cartSheetCount.classList.toggle('hidden', count === 0);
     }
 
     function renderCheckout() {
@@ -763,6 +784,14 @@ const App = (() => {
         DOM.backHomeBtn.addEventListener('click', () => {
             navigateTo('home');
         });
+
+        if (DOM.cartCheckoutBtn) {
+            DOM.cartCheckoutBtn.addEventListener('click', () => {
+                if (getCartItemsCount() > 0) {
+                    navigateTo('checkout');
+                }
+            });
+        }
         
         // Маска телефона
         setupPhoneMask();
@@ -777,6 +806,60 @@ const App = (() => {
     }
 
     // ============================================
+    // HERO SLIDER
+    // ============================================
+    function setupHeroSlider() {
+        const slides = Array.from(document.querySelectorAll('.hero-slide'));
+        const arrows = Array.from(document.querySelectorAll('[data-hero-dir]'));
+        if (slides.length === 0 || !DOM.heroDots) return;
+
+        DOM.heroDots.innerHTML = '';
+        slides.forEach((_, index) => {
+            const dot = document.createElement('button');
+            dot.className = 'hero-dot';
+            dot.type = 'button';
+            dot.setAttribute('aria-label', `Слайд ${index + 1}`);
+            dot.addEventListener('click', () => {
+                setHeroSlide(index);
+                restartHeroSlider();
+            });
+            DOM.heroDots.appendChild(dot);
+        });
+
+        arrows.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const direction = Number(btn.dataset.heroDir) || 1;
+                setHeroSlide(heroState.current + direction);
+                restartHeroSlider();
+            });
+        });
+
+        setHeroSlide(0);
+        restartHeroSlider();
+    }
+
+    function setHeroSlide(index) {
+        const slides = Array.from(document.querySelectorAll('.hero-slide'));
+        const dots = Array.from(document.querySelectorAll('.hero-dot'));
+        if (slides.length === 0) return;
+
+        heroState.current = (index + slides.length) % slides.length;
+        slides.forEach((slide, slideIndex) => {
+            slide.classList.toggle('active', slideIndex === heroState.current);
+        });
+        dots.forEach((dot, dotIndex) => {
+            dot.classList.toggle('active', dotIndex === heroState.current);
+        });
+    }
+
+    function restartHeroSlider() {
+        if (heroState.timer) clearInterval(heroState.timer);
+        heroState.timer = setInterval(() => {
+            setHeroSlide(heroState.current + 1);
+        }, heroState.interval);
+    }
+
+    // ============================================
     // INIT
     // ============================================
     async function init() {
@@ -787,16 +870,8 @@ const App = (() => {
         loadCart();
         updateCartBadge();
         bindEvents();
+        setupHeroSlider();
         await loadData();
-        
-        // Приветственное уведомление Telegram
-        if (tg?.initDataUnsafe?.user?.first_name) {
-            const firstName = tg.initDataUnsafe.user.first_name;
-            const heroEl = document.querySelector('.hero p');
-            if (heroEl) {
-                heroEl.textContent = `Привет, ${firstName}! Всё натуральное, из села Дменис 🍎`;
-            }
-        }
     }
 
     // Публичный API
